@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Plane, Calendar, Users, ArrowRight, MapPin, ChevronDown, Check, ArrowLeft, Info, Wind, Star, User } from 'lucide-react';
+import { Plane, Calendar, Users, ArrowRight, MapPin, ChevronDown, Check, ArrowLeft, Info, Wind, Star, User, PlaneTakeoff, PlaneLanding } from 'lucide-react';
 import { useHighLevel } from './hooks/useHighLevel';
 import { useAirportSearch } from './hooks/useAirportSearch';
 
@@ -44,17 +44,17 @@ const MOCK_AIRCRAFT: Aircraft[] = [
     speed: '192 mph',
     range: '1,285 nm',
     estimate: 2800,
-    image: 'https://images.unsplash.com/photo-1583070344499-bf3c53b95d78?q=80&w=2836&auto=format&fit=crop'
+    image: 'https://storage.googleapis.com/msgsndr/aewRs6OT3I7lUSwPF6ET/media/68f99c5602a7ea73681b6320.webp'
   },
   {
-    id: 'da62-blue',
-    name: 'Diamond DA62 (Blue)',
+    id: 'da62-silver',
+    name: 'Diamond DA62 (Silver)',
     type: 'Twin Engine',
     seats: 6,
     speed: '192 mph',
     range: '1,285 nm',
     estimate: 2800,
-    image: 'https://images.unsplash.com/photo-1605450183428-eb9127d6d40a?q=80&w=2940&auto=format&fit=crop'
+    image: 'https://storage.googleapis.com/msgsndr/aewRs6OT3I7lUSwPF6ET/media/68f99c56778d657ac965d67e.webp'
   },
   {
     id: 'cirrus-vision',
@@ -64,7 +64,7 @@ const MOCK_AIRCRAFT: Aircraft[] = [
     speed: '345 mph',
     range: '1,275 nm',
     estimate: 4500,
-    image: 'https://images.unsplash.com/photo-1569629743817-70d8db6c323b?q=80&w=2940&auto=format&fit=crop'
+    image: 'https://storage.googleapis.com/msgsndr/aewRs6OT3I7lUSwPF6ET/media/68f99c56778d656b2265d67d.webp'
   }
 ];
 
@@ -121,7 +121,7 @@ export default function Direct2App() {
             <img
               src="https://storage.googleapis.com/msgsndr/aewRs6OT3I7lUSwPF6ET/media/680efd80b3d583557eca3366.png"
               alt="Direct2"
-              className="h-8 md:h-10 w-auto"
+              className="h-10 md:h-14 w-auto"
             />
           </div>
           <nav className="hidden md:flex gap-6 text-slate-300 text-sm font-medium">
@@ -212,11 +212,7 @@ function HomeScreen({ bookingData, updateBooking, onNext, searchAirports }: { bo
             <div className="md:col-span-5 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-0 md:border md:border-slate-200 md:rounded-xl">
                <div className="relative p-4 bg-slate-50 md:bg-white border border-slate-200 md:border-0 rounded-xl md:rounded-none md:rounded-l-xl z-10">
                   <div className="flex items-center gap-3">
-                    <img
-                      src="https://storage.googleapis.com/msgsndr/aewRs6OT3I7lUSwPF6ET/media/68251058c4693210f8c542da.svg"
-                      alt="Departure"
-                      className="w-5 h-5 flex-shrink-0"
-                    />
+                    <PlaneTakeoff className="w-5 h-5 text-slate-400 flex-shrink-0" />
                     <div className="flex-1 relative min-w-0">
                       <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">From</label>
                       <input
@@ -252,11 +248,7 @@ function HomeScreen({ bookingData, updateBooking, onNext, searchAirports }: { bo
                 </div>
                 <div className="relative p-4 bg-slate-50 md:bg-white border border-slate-200 md:border-0 md:border-l md:border-slate-100 rounded-xl md:rounded-none md:rounded-r-xl z-10">
                   <div className="flex items-center gap-3">
-                    <img
-                      src="https://storage.googleapis.com/msgsndr/aewRs6OT3I7lUSwPF6ET/media/68251058c4693210f8c542da.svg"
-                      alt="Arrival"
-                      className="w-5 h-5 flex-shrink-0"
-                    />
+                    <PlaneLanding className="w-5 h-5 text-slate-400 flex-shrink-0" />
                     <div className="flex-1 relative min-w-0">
                       <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">To</label>
                       <input
