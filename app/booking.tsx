@@ -205,8 +205,8 @@ function HomeScreen({ bookingData, updateBooking, onNext, searchAirports }: { bo
         <form onSubmit={handleSubmit} className="p-6 md:p-8 lg:p-10">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
             {/* Route */}
-            <div className="md:col-span-5 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-0 md:border md:border-slate-200 md:rounded-xl md:overflow-hidden">
-               <div className="relative flex items-center p-4 bg-slate-50 md:bg-white border border-slate-200 md:border-0 rounded-xl md:rounded-none">
+            <div className="md:col-span-5 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-0 md:border md:border-slate-200 md:rounded-xl">
+               <div className="relative flex items-center p-4 bg-slate-50 md:bg-white border border-slate-200 md:border-0 rounded-xl md:rounded-none md:rounded-l-xl z-10">
                   <MapPin className="text-slate-400 w-5 h-5 absolute left-4" />
                   <div className="ml-8 flex-1 relative">
                     <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">From</label>
@@ -223,16 +223,16 @@ function HomeScreen({ bookingData, updateBooking, onNext, searchAirports }: { bo
                       placeholder="Origin"
                     />
                     {showOriginResults && originResults.length > 0 && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-xl border border-slate-200 max-h-60 overflow-y-auto z-50">
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-2xl border border-slate-200 max-h-60 overflow-y-auto z-[100]">
                         {originResults.map((airport) => (
                           <button
                             key={airport.iata}
                             type="button"
                             onClick={() => selectOrigin(airport.iata)}
-                            className="w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-0"
+                            className="w-full text-left px-4 py-3 hover:bg-amber-50 border-b border-slate-100 last:border-0 transition-colors"
                           >
-                            <div className="font-medium text-slate-900">{airport.iata}</div>
-                            <div className="text-sm text-slate-500">{airport.name}</div>
+                            <div className="font-bold text-slate-900">{airport.iata}</div>
+                            <div className="text-sm text-slate-600">{airport.name}</div>
                             <div className="text-xs text-slate-400">{airport.city}, {airport.state || airport.country}</div>
                           </button>
                         ))}
@@ -240,7 +240,7 @@ function HomeScreen({ bookingData, updateBooking, onNext, searchAirports }: { bo
                     )}
                   </div>
                 </div>
-                <div className="relative flex items-center p-4 bg-slate-50 md:bg-white border border-slate-200 md:border-0 md:border-l md:border-slate-100 rounded-xl md:rounded-none">
+                <div className="relative flex items-center p-4 bg-slate-50 md:bg-white border border-slate-200 md:border-0 md:border-l md:border-slate-100 rounded-xl md:rounded-none md:rounded-r-xl z-10">
                   <MapPin className="text-slate-400 w-5 h-5 absolute left-4" />
                   <div className="ml-8 flex-1 relative">
                     <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">To</label>
@@ -258,16 +258,16 @@ function HomeScreen({ bookingData, updateBooking, onNext, searchAirports }: { bo
                       autoFocus
                     />
                     {showDestResults && destResults.length > 0 && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-xl border border-slate-200 max-h-60 overflow-y-auto z-50">
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-2xl border border-slate-200 max-h-60 overflow-y-auto z-[100]">
                         {destResults.map((airport) => (
                           <button
                             key={airport.iata}
                             type="button"
                             onClick={() => selectDestination(airport.iata)}
-                            className="w-full text-left px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-0"
+                            className="w-full text-left px-4 py-3 hover:bg-amber-50 border-b border-slate-100 last:border-0 transition-colors"
                           >
-                            <div className="font-medium text-slate-900">{airport.iata}</div>
-                            <div className="text-sm text-slate-500">{airport.name}</div>
+                            <div className="font-bold text-slate-900">{airport.iata}</div>
+                            <div className="text-sm text-slate-600">{airport.name}</div>
                             <div className="text-xs text-slate-400">{airport.city}, {airport.state || airport.country}</div>
                           </button>
                         ))}
