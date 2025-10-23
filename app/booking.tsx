@@ -54,7 +54,7 @@ const MOCK_AIRCRAFT: Aircraft[] = [
     speed: '192 mph',
     range: '1,285 nm',
     estimate: 2800,
-    image: 'https://storage.googleapis.com/msgsndr/aewRs6OT3I7lUSwPF6ET/media/68f99f9a02a7ea70871c5e34.webp'
+    image: 'https://storage.googleapis.com/msgsndr/aewRs6OT3I7lUSwPF6ET/media/68f99f9aa2cacb5407d11b50.webp'
   },
   {
     id: 'cirrus-vision',
@@ -64,7 +64,7 @@ const MOCK_AIRCRAFT: Aircraft[] = [
     speed: '345 mph',
     range: '1,275 nm',
     estimate: 4500,
-    image: 'https://storage.googleapis.com/msgsndr/aewRs6OT3I7lUSwPF6ET/media/68f99f9aa2cacb5407d11b50.webp'
+    image: 'https://storage.googleapis.com/msgsndr/aewRs6OT3I7lUSwPF6ET/media/68f99f9aad50b20bfb75753f.webp'
   }
 ];
 
