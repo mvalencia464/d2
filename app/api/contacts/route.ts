@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, phone } = body;
+    const { name, email, phone, tags } = body;
 
     // Validate required fields
     if (!name || !email) {
@@ -29,6 +29,21 @@ export async function POST(request: NextRequest) {
     const firstName = nameParts[0];
     const lastName = nameParts.slice(1).join(' ') || '';
 
+    // Prepare contact data
+    const contactData: any = {
+      firstName,
+      lastName,
+      name: name.trim(),
+      email,
+      phone: phone || '',
+      locationId
+    };
+
+    // Add tags if provided
+    if (tags && Array.isArray(tags) && tags.length > 0) {
+      contactData.tags = tags;
+    }
+
     // Call HighLevel API v2.0
     const response = await fetch('https://services.leadconnectorhq.com/contacts/', {
       method: 'POST',
@@ -38,14 +53,7 @@ export async function POST(request: NextRequest) {
         'Version': '2021-07-28',
         'Accept': 'application/json'
       },
-      body: JSON.stringify({
-        firstName,
-        lastName,
-        name: name.trim(),
-        email,
-        phone: phone || '',
-        locationId
-      })
+      body: JSON.stringify(contactData)
     });
 
     if (!response.ok) {

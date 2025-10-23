@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Plane, Users, ArrowRight, MapPin, ChevronDown, Check, ArrowLeft, Info, Wind, Star, User, PlaneTakeoff, PlaneLanding } from 'lucide-react';
 import { useHighLevel } from './hooks/useHighLevel';
-import { useAirportSearch } from './hooks/useAirportSearch';
+import { useAirportDB, type AirportDBResult } from './hooks/useAirportDB';
 
 type Screen = 'HOME' | 'RESULTS' | 'DETAILS' | 'CONFIRMATION';
 type TripType = 'one-way' | 'round-trip';
@@ -69,6 +70,7 @@ const MOCK_AIRCRAFT: Aircraft[] = [
 ];
 
 export default function Direct2App() {
+  const router = useRouter();
   const [currentScreen, setCurrentScreen] = useState<Screen>('HOME');
   const [bookingData, setBookingData] = useState<BookingData>({
     tripType: 'round-trip',
@@ -83,7 +85,7 @@ export default function Direct2App() {
 
   // Initialize hooks
   const { createContact } = useHighLevel();
-  const { searchAirports } = useAirportSearch();
+  const { searchAirports: searchAirportsDB } = useAirportDB();
 
   const updateBooking = (data: Partial<BookingData>) => {
     setBookingData(prev => ({ ...prev, ...data }));
@@ -92,7 +94,7 @@ export default function Direct2App() {
   const renderScreen = () => {
     switch (currentScreen) {
       case 'HOME':
-        return <HomeScreen bookingData={bookingData} updateBooking={updateBooking} onNext={() => setCurrentScreen('RESULTS')} searchAirports={searchAirports} />;
+        return <HomeScreen bookingData={bookingData} updateBooking={updateBooking} onNext={() => setCurrentScreen('RESULTS')} searchAirportsDB={searchAirportsDB} />;
       case 'RESULTS':
         return <ResultsScreen bookingData={bookingData} updateBooking={updateBooking} onNext={() => setCurrentScreen('DETAILS')} onBack={() => setCurrentScreen('HOME')} />;
       case 'DETAILS':
@@ -107,11 +109,20 @@ export default function Direct2App() {
   return (
     <div className="min-h-screen bg-slate-950 font-sans text-slate-900 selection:bg-amber-500/30">
        {/* Persistent Background */}
-       <div 
+       <div
         className="fixed inset-0 opacity-20 bg-cover bg-center bg-no-repeat pointer-events-none"
         style={{ backgroundImage: `url('https://images.unsplash.com/photo-1519852476561-ec618b0183ba?q=80&w=2856&auto=format&fit=crop')` }}
       />
       <div className="fixed inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-900/50 pointer-events-none" />
+
+      {/* Subtle Watermark Icon */}
+      <div className="fixed bottom-8 right-8 opacity-5 pointer-events-none z-0">
+        <img
+          src="https://storage.googleapis.com/msgsndr/aewRs6OT3I7lUSwPF6ET/media/68f9be07a2cacb17e7d61f3a.svg"
+          alt=""
+          className="w-64 h-64 md:w-96 md:h-96"
+        />
+      </div>
 
       {/* Main Content Area */}
       <div className="relative z-10 min-h-screen flex flex-col">
@@ -125,9 +136,24 @@ export default function Direct2App() {
             />
           </div>
           <nav className="hidden md:flex gap-6 text-slate-300 text-sm font-medium">
-            <button className="hover:text-amber-500 transition-colors">Concierge</button>
-            <button className="hover:text-amber-500 transition-colors">Fleet</button>
-            <button className="hover:text-amber-500 transition-colors">Sign In</button>
+            <button
+              onClick={() => router.push('/accounts?view=concierge')}
+              className="hover:text-amber-500 transition-colors"
+            >
+              Concierge
+            </button>
+            <button
+              onClick={() => router.push('/accounts?view=fleet')}
+              className="hover:text-amber-500 transition-colors"
+            >
+              Fleet
+            </button>
+            <button
+              onClick={() => router.push('/accounts')}
+              className="hover:text-amber-500 transition-colors"
+            >
+              Sign In
+            </button>
           </nav>
         </header>
 
@@ -148,15 +174,32 @@ export default function Direct2App() {
 // ================= SCREENS =================
 
 // --- 1. HOME SCREEN (SEARCH WIDGET) ---
-function HomeScreen({ bookingData, updateBooking, onNext, searchAirports }: { bookingData: BookingData, updateBooking: (d: Partial<BookingData>) => void, onNext: () => void, searchAirports: (query: string) => any[] }) {
+function HomeScreen({ bookingData, updateBooking, onNext, searchAirportsDB }: { bookingData: BookingData, updateBooking: (d: Partial<BookingData>) => void, onNext: () => void, searchAirportsDB: (query: string) => Promise<AirportDBResult[]> }) {
   const [isPaxOpen, setIsPaxOpen] = useState(false);
   const [originSearch, setOriginSearch] = useState(bookingData.origin);
   const [destSearch, setDestSearch] = useState(bookingData.destination);
   const [showOriginResults, setShowOriginResults] = useState(false);
   const [showDestResults, setShowDestResults] = useState(false);
+  const [originResults, setOriginResults] = useState<AirportDBResult[]>([]);
+  const [destResults, setDestResults] = useState<AirportDBResult[]>([]);
 
-  const originResults = searchAirports(originSearch);
-  const destResults = searchAirports(destSearch);
+  // Search for origin airports
+  useEffect(() => {
+    if (originSearch && originSearch.length >= 2) {
+      searchAirportsDB(originSearch).then(setOriginResults);
+    } else {
+      setOriginResults([]);
+    }
+  }, [originSearch, searchAirportsDB]);
+
+  // Search for destination airports
+  useEffect(() => {
+    if (destSearch && destSearch.length >= 2) {
+      searchAirportsDB(destSearch).then(setDestResults);
+    } else {
+      setDestResults([]);
+    }
+  }, [destSearch, searchAirportsDB]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -224,7 +267,7 @@ function HomeScreen({ bookingData, updateBooking, onNext, searchAirports }: { bo
                         }}
                         onFocus={() => setShowOriginResults(true)}
                         onBlur={() => setTimeout(() => setShowOriginResults(false), 200)}
-                        className="w-full bg-transparent p-0 border-none focus:ring-0 text-slate-900 font-medium placeholder:text-slate-300"
+                        className="w-full bg-transparent p-0 border-none focus:outline-none focus:ring-0 text-slate-900 font-medium placeholder:text-slate-300"
                         placeholder="Origin"
                       />
                       {showOriginResults && originResults.length > 0 && (
@@ -260,7 +303,7 @@ function HomeScreen({ bookingData, updateBooking, onNext, searchAirports }: { bo
                         }}
                         onFocus={() => setShowDestResults(true)}
                         onBlur={() => setTimeout(() => setShowDestResults(false), 200)}
-                        className="w-full bg-transparent p-0 border-none focus:ring-0 text-slate-900 font-medium placeholder:text-slate-300"
+                        className="w-full bg-transparent p-0 border-none focus:outline-none focus:ring-0 text-slate-900 font-medium placeholder:text-slate-300"
                         placeholder="Destination"
                         autoFocus
                       />
@@ -397,8 +440,8 @@ function ResultsScreen({ bookingData, updateBooking, onNext, onBack }: { booking
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm text-slate-500 font-medium">Estimated Price</div>
-                    <div className="text-2xl font-bold text-slate-900">${aircraft.estimate.toLocaleString()}</div>
+                    <div className="text-sm text-slate-500 font-medium">Pricing</div>
+                    <div className="text-xl font-bold text-amber-600">GET QUOTE</div>
                   </div>
                 </div>
                 
@@ -483,10 +526,10 @@ function DetailsScreen({ bookingData, updateBooking, onNext, onBack, createConta
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1">Full Name *</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   required
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none transition-all"
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-slate-300 focus:bg-white transition-all"
                   placeholder="John Doe"
                   value={bookingData.contact.name}
                   onChange={e => updateBooking({ contact: { ...bookingData.contact, name: e.target.value }})}
@@ -494,10 +537,10 @@ function DetailsScreen({ bookingData, updateBooking, onNext, onBack, createConta
               </div>
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1">Email Address *</label>
-                <input 
+                <input
                   type="email"
-                  required 
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none transition-all"
+                  required
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-slate-300 focus:bg-white transition-all"
                   placeholder="john@example.com"
                   value={bookingData.contact.email}
                   onChange={e => updateBooking({ contact: { ...bookingData.contact, email: e.target.value }})}
@@ -505,9 +548,9 @@ function DetailsScreen({ bookingData, updateBooking, onNext, onBack, createConta
               </div>
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1">Phone Number</label>
-                <input 
-                  type="tel" 
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none transition-all"
+                <input
+                  type="tel"
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-slate-300 focus:bg-white transition-all"
                   placeholder="+1 (555) 000-0000"
                   value={bookingData.contact.phone}
                   onChange={e => updateBooking({ contact: { ...bookingData.contact, phone: e.target.value }})}
@@ -526,7 +569,7 @@ function DetailsScreen({ bookingData, updateBooking, onNext, onBack, createConta
                     className="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 rounded-xl font-bold text-lg shadow-xl shadow-amber-500/20 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
                 >
                     {loading ? (
-                        <span className="animate-pulse">Submitting to HighLevel...</span>
+                        <span className="animate-pulse">Submitting request...</span>
                     ) : (
                         <span>Request Flight</span>
                     )}
@@ -562,13 +605,6 @@ function DetailsScreen({ bookingData, updateBooking, onNext, onBack, createConta
                       </div>
                   </div>
               </div>
-
-              <div className="mt-8 pt-6 border-t border-slate-200">
-                  <div className="flex justify-between items-end">
-                      <span className="text-sm text-slate-500 font-medium">Estimated Total</span>
-                      <span className="text-3xl font-bold text-slate-900">${bookingData.selectedAircraft?.estimate.toLocaleString()}</span>
-                  </div>
-              </div>
           </div>
         </div>
       </div>
@@ -588,7 +624,7 @@ function ConfirmationScreen({ onReset }: { onReset: () => void }) {
               <p className="text-slate-500 text-lg mb-8">
                   Thank you. Our flight concierge team is reviewing your request and will contact you shortly with a formal quote and itinerary.
               </p>
-              
+
               <div className="bg-slate-50 rounded-xl p-6 mb-8 text-left inline-block w-full max-w-md">
                   <h4 className="font-bold text-slate-900 mb-2 flex items-center gap-2">
                       <Star className="w-4 h-4 text-amber-500 fill-amber-500"/> What happens next?
@@ -600,14 +636,9 @@ function ConfirmationScreen({ onReset }: { onReset: () => void }) {
                   </ul>
               </div>
 
-              <div className="flex flex-col md:flex-row gap-4 justify-center">
-                 <button onClick={onReset} className="px-8 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors">
-                     Back to Home
-                 </button>
-                 <button className="px-8 py-3 bg-white text-slate-900 border-2 border-slate-200 rounded-xl font-bold hover:border-slate-900 transition-colors">
-                     View Account
-                 </button>
-              </div>
+              <button onClick={onReset} className="px-8 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors">
+                  Back to Home
+              </button>
           </div>
       </div>
     );

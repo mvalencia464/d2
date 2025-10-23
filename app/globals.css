@@ -10,6 +10,14 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Direct2 Brand Colors */
+  --color-direct2-green: #2F421E;
+  --color-direct2-green-dark: #1a2511;
+  --color-direct2-green-darker: #0d1208;
+  --color-direct2-orange: #F59E0C;
+  --color-direct2-orange-dark: #d68a0a;
+  --color-direct2-orange-darker: #b87609;
 }
 
 @media (prefers-color-scheme: dark) {

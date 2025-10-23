@@ -4,6 +4,7 @@ interface ContactData {
   name: string;
   email: string;
   phone?: string;
+  tags?: string[];
 }
 
 interface UseHighLevelReturn {
@@ -16,7 +17,7 @@ export const useHighLevel = (): UseHighLevelReturn => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const createContact = async ({ name, email, phone }: ContactData) => {
+  const createContact = async ({ name, email, phone, tags }: ContactData) => {
     setLoading(true);
     setError(null);
 
@@ -29,7 +30,8 @@ export const useHighLevel = (): UseHighLevelReturn => {
         body: JSON.stringify({
           name,
           email,
-          phone: phone || ''
+          phone: phone || '',
+          tags: tags || []
         })
       });
 
