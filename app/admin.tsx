@@ -489,7 +489,7 @@ export default function Direct2AeroApp() {
                 </div>
                 <div className="flex items-center justify-between sm:justify-end gap-4">
                   <StatusBadge status={flight.status} />
-                  <Button variant="ghost" size="sm">Receipt</Button>
+                  <Button variant="ghost" className="text-sm">Receipt</Button>
                 </div>
               </Card>
             ))}
@@ -718,7 +718,7 @@ export default function Direct2AeroApp() {
           <Card className="p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold text-slate-900">Recent Bookings</h3>
-              <Button variant="ghost" size="sm" onClick={() => setCurrentView('admin-flights')}>View All</Button>
+              <Button variant="ghost" className="text-sm" onClick={() => setCurrentView('admin-flights')}>View All</Button>
             </div>
             <div className="space-y-4">
               {flights.slice(0, 5).map(flight => {
@@ -739,7 +739,7 @@ export default function Direct2AeroApp() {
           <Card className="p-6">
              <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold text-slate-900">New Members</h3>
-              <Button variant="ghost" size="sm" onClick={() => setCurrentView('admin-users')}>View All</Button>
+              <Button variant="ghost" className="text-sm" onClick={() => setCurrentView('admin-users')}>View All</Button>
             </div>
              <div className="space-y-4">
               {users.filter(u => u.role === 'user').slice(0, 5).map(user => (
@@ -813,11 +813,11 @@ export default function Direct2AeroApp() {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         {flight.status === 'Pending' && (
-                          <Button variant="ghost" size="icon" onClick={() => adminUpdateFlightStatus(flight.id, 'Confirmed')} title="Confirm Flight" className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50">
+                          <Button variant="ghost" onClick={() => adminUpdateFlightStatus(flight.id, 'Confirmed')} title="Confirm Flight" className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 p-2">
                             <CheckCircle className="h-4 w-4" />
                           </Button>
                         )}
-                        <Button variant="ghost" size="icon" onClick={() => adminDeleteFlight(flight.id)} title="Delete Flight" className="text-red-400 hover:text-red-600 hover:bg-red-50">
+                        <Button variant="ghost" onClick={() => adminDeleteFlight(flight.id)} title="Delete Flight" className="text-red-400 hover:text-red-600 hover:bg-red-50 p-2">
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
@@ -1019,14 +1019,14 @@ export default function Direct2AeroApp() {
                     className="bg-white" 
                   />
                 </div>
-                <Button type="submit" className="w-full" size="lg">Sign In</Button>
+                <Button type="submit" className="w-full py-3">Sign In</Button>
               </form>
             ) : (
               <form onSubmit={(e) => { e.preventDefault(); alert("Sign up simulation complete. Please sign in."); setAuthView('signin'); }} className="space-y-4">
                 <div className="space-y-2"><Label>Full Name</Label><Input required /></div>
                 <div className="space-y-2"><Label>Email</Label><Input type="email" required /></div>
                 <div className="space-y-2"><Label>Password</Label><Input type="password" required /></div>
-                <Button type="submit" className="w-full" size="lg">Create Account</Button>
+                <Button type="submit" className="w-full py-3">Create Account</Button>
               </form>
             )}
 
