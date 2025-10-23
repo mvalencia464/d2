@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { Plane, Calendar, Users, ArrowRight, MapPin, ChevronDown, Check, ArrowLeft, Info, Wind, Star, User } from 'lucide-react';
+import { useHighLevel } from './hooks/useHighLevel';
+import { useAirportSearch } from './hooks/useAirportSearch';
 
 type Screen = 'HOME' | 'RESULTS' | 'DETAILS' | 'CONFIRMATION';
 type TripType = 'one-way' | 'round-trip';
@@ -79,6 +81,10 @@ export default function Direct2App() {
     contact: { name: '', email: '', phone: '' }
   });
 
+  // Initialize hooks
+  const { createContact } = useHighLevel();
+  const { searchAirports } = useAirportSearch();
+
   const updateBooking = (data: Partial<BookingData>) => {
     setBookingData(prev => ({ ...prev, ...data }));
   };
@@ -86,11 +92,11 @@ export default function Direct2App() {
   const renderScreen = () => {
     switch (currentScreen) {
       case 'HOME':
-        return <HomeScreen bookingData={bookingData} updateBooking={updateBooking} onNext={() => setCurrentScreen('RESULTS')} />;
+        return <HomeScreen bookingData={bookingData} updateBooking={updateBooking} onNext={() => setCurrentScreen('RESULTS')} searchAirports={searchAirports} />;
       case 'RESULTS':
         return <ResultsScreen bookingData={bookingData} updateBooking={updateBooking} onNext={() => setCurrentScreen('DETAILS')} onBack={() => setCurrentScreen('HOME')} />;
       case 'DETAILS':
-        return <DetailsScreen bookingData={bookingData} updateBooking={updateBooking} onNext={() => setCurrentScreen('CONFIRMATION')} onBack={() => setCurrentScreen('RESULTS')} />;
+        return <DetailsScreen bookingData={bookingData} updateBooking={updateBooking} onNext={() => setCurrentScreen('CONFIRMATION')} onBack={() => setCurrentScreen('RESULTS')} createContact={createContact} />;
       case 'CONFIRMATION':
         return <ConfirmationScreen onReset={() => { setCurrentScreen('HOME'); setBookingData({ ...bookingData, selectedAircraft: null, destination: '', departDate: '', returnDate: '' }); }} />;
       default:
@@ -138,8 +144,12 @@ export default function Direct2App() {
 // ================= SCREENS =================
 
 // --- 1. HOME SCREEN (SEARCH WIDGET) ---
-function HomeScreen({ bookingData, updateBooking, onNext }: { bookingData: BookingData, updateBooking: (d: Partial<BookingData>) => void, onNext: () => void }) {
+function HomeScreen({ bookingData, updateBooking, onNext, searchAirports }: { bookingData: BookingData, updateBooking: (d: Partial<BookingData>) => void, onNext: () => void, searchAirports: (query: string) => any[] }) {
   const [isPaxOpen, setIsPaxOpen] = useState(false);
+  const [originSearch, setOriginSearch] = useState('');
+  const [destSearch, setDestSearch] = useState('');
+  const [showOriginResults, setShowOriginResults] = useState(false);
+  const [showDestResults, setShowDestResults] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -337,21 +347,37 @@ function ResultsScreen({ bookingData, updateBooking, onNext, onBack }: { booking
 }
 
 // --- 3. DETAILS SCREEN ---
-function DetailsScreen({ bookingData, updateBooking, onNext, onBack }: { bookingData: BookingData, updateBooking: (d: Partial<BookingData>) => void, onNext: () => void, onBack: () => void }) {
+function DetailsScreen({ bookingData, updateBooking, onNext, onBack, createContact }: { bookingData: BookingData, updateBooking: (d: Partial<BookingData>) => void, onNext: () => void, onBack: () => void, createContact: (data: any) => Promise<any> }) {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleFinalSubmit = (e: React.FormEvent) => {
+  const handleFinalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!bookingData.contact.name || !bookingData.contact.email) {
         alert("Please fill in required contact details.");
         return;
     }
+
     setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
+    setError(null);
+
+    try {
+      // Create contact in HighLevel
+      await createContact({
+        name: bookingData.contact.name,
+        email: bookingData.contact.email,
+        phone: bookingData.contact.phone
+      });
+
+      // Success - move to confirmation
       onNext();
-    }, 1500);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to submit booking';
+      setError(errorMessage);
+      console.error('Booking submission error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -413,13 +439,18 @@ function DetailsScreen({ bookingData, updateBooking, onNext, onBack }: { booking
               </div>
             </div>
             <div className="pt-6">
-                <button 
-                    type="submit" 
+                {error && (
+                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                    {error}
+                  </div>
+                )}
+                <button
+                    type="submit"
                     disabled={loading}
                     className="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 rounded-xl font-bold text-lg shadow-xl shadow-amber-500/20 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
                 >
                     {loading ? (
-                        <span className="animate-pulse">Processing...</span>
+                        <span className="animate-pulse">Submitting to HighLevel...</span>
                     ) : (
                         <span>Request Flight</span>
                     )}
