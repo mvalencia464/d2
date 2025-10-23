@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Plane, Calendar, Users, ArrowRight, MapPin, ChevronDown, Check, ArrowLeft, Info, Wind, Star, User, PlaneTakeoff, PlaneLanding } from 'lucide-react';
+import { Plane, Users, ArrowRight, MapPin, ChevronDown, Check, ArrowLeft, Info, Wind, Star, User, PlaneTakeoff, PlaneLanding } from 'lucide-react';
 import { useHighLevel } from './hooks/useHighLevel';
 import { useAirportSearch } from './hooks/useAirportSearch';
 
@@ -44,7 +44,7 @@ const MOCK_AIRCRAFT: Aircraft[] = [
     speed: '192 mph',
     range: '1,285 nm',
     estimate: 2800,
-    image: 'https://storage.googleapis.com/msgsndr/aewRs6OT3I7lUSwPF6ET/media/68f99c5602a7ea73681b6320.webp'
+    image: 'https://storage.googleapis.com/msgsndr/aewRs6OT3I7lUSwPF6ET/media/68f99f9a02a7ea70871c5e34.webp'
   },
   {
     id: 'da62-silver',
@@ -54,7 +54,7 @@ const MOCK_AIRCRAFT: Aircraft[] = [
     speed: '192 mph',
     range: '1,285 nm',
     estimate: 2800,
-    image: 'https://storage.googleapis.com/msgsndr/aewRs6OT3I7lUSwPF6ET/media/68f99c56778d657ac965d67e.webp'
+    image: 'https://storage.googleapis.com/msgsndr/aewRs6OT3I7lUSwPF6ET/media/68f99f9a02a7ea70871c5e34.webp'
   },
   {
     id: 'cirrus-vision',
@@ -64,7 +64,7 @@ const MOCK_AIRCRAFT: Aircraft[] = [
     speed: '345 mph',
     range: '1,275 nm',
     estimate: 4500,
-    image: 'https://storage.googleapis.com/msgsndr/aewRs6OT3I7lUSwPF6ET/media/68f99c56778d656b2265d67d.webp'
+    image: 'https://storage.googleapis.com/msgsndr/aewRs6OT3I7lUSwPF6ET/media/68f99f9aa2cacb5407d11b50.webp'
   }
 ];
 
@@ -287,18 +287,16 @@ function HomeScreen({ bookingData, updateBooking, onNext, searchAirports }: { bo
             {/* Dates */}
             <div className="md:col-span-5 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-0 md:border md:border-slate-200 md:rounded-xl md:overflow-hidden">
                <div className={`relative flex items-center p-4 bg-slate-50 md:bg-white border border-slate-200 md:border-0 rounded-xl md:rounded-none ${bookingData.tripType === 'one-way' ? 'md:col-span-2' : ''}`}>
-                  <Calendar className="text-slate-400 w-5 h-5 absolute left-4" />
-                  <div className="ml-8 flex-1">
+                  <div className="flex-1">
                     <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Depart</label>
-                    <input type="date" value={bookingData.departDate} onChange={(e) => updateBooking({ departDate: e.target.value })} className="w-full bg-transparent p-0 border-none focus:ring-0 text-slate-900 font-medium" />
+                    <input type="date" value={bookingData.departDate} onChange={(e) => updateBooking({ departDate: e.target.value })} className="w-full bg-transparent p-0 border-none focus:outline-none focus:ring-0 text-slate-900 font-medium" />
                   </div>
                 </div>
                 {bookingData.tripType === 'round-trip' && (
                   <div className="relative flex items-center p-4 bg-slate-50 md:bg-white border border-slate-200 md:border-0 md:border-l md:border-slate-100 rounded-xl md:rounded-none">
-                    <Calendar className="text-slate-400 w-5 h-5 absolute left-4" />
-                    <div className="ml-8 flex-1">
+                    <div className="flex-1">
                       <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Return</label>
-                      <input type="date" value={bookingData.returnDate} min={bookingData.departDate} onChange={(e) => updateBooking({ returnDate: e.target.value })} className="w-full bg-transparent p-0 border-none focus:ring-0 text-slate-900 font-medium" />
+                      <input type="date" value={bookingData.returnDate} min={bookingData.departDate} onChange={(e) => updateBooking({ returnDate: e.target.value })} className="w-full bg-transparent p-0 border-none focus:outline-none focus:ring-0 text-slate-900 font-medium" />
                     </div>
                   </div>
                 )}
@@ -550,7 +548,7 @@ function DetailsScreen({ bookingData, updateBooking, onNext, onBack, createConta
                       </div>
                   </div>
                   <div className="flex items-start gap-4">
-                      <div className="mt-1 bg-amber-100 p-2 rounded-full text-amber-600"><Calendar className="w-4 h-4"/></div>
+                      <div className="mt-1 bg-amber-100 p-2 rounded-full text-amber-600"><ArrowRight className="w-4 h-4"/></div>
                       <div>
                           <div className="font-bold text-slate-900">{bookingData.departDate}</div>
                           {bookingData.returnDate && <div className="text-sm text-slate-500">Returning: {bookingData.returnDate}</div>}
