@@ -34,36 +34,36 @@ interface Aircraft {
   image: string;
 }
 
-// --- Mock Data ---
+// --- Direct2 Fleet ---
 const MOCK_AIRCRAFT: Aircraft[] = [
   {
-    id: 'pc12',
-    name: 'Pilatus PC-12 NG',
-    type: 'Turboprop',
-    seats: 8,
-    speed: '320 mph',
-    range: '1,800 nm',
-    estimate: 4500,
-    image: 'https://images.unsplash.com/photo-1605450183428-eb9127d6d40a?q=80&w=2940&auto=format&fit=crop'
-  },
-  {
-    id: 'cj3',
-    name: 'Citation CJ3+',
-    type: 'Light Jet',
+    id: 'da62-orange',
+    name: 'Diamond DA62 (Orange)',
+    type: 'Twin Engine',
     seats: 6,
-    speed: '480 mph',
-    range: '2,040 nm',
-    estimate: 8200,
+    speed: '192 mph',
+    range: '1,285 nm',
+    estimate: 2800,
     image: 'https://images.unsplash.com/photo-1583070344499-bf3c53b95d78?q=80&w=2836&auto=format&fit=crop'
   },
   {
-    id: 'praetor',
-    name: 'Embraer Praetor 600',
-    type: 'Super-Midsize Jet',
-    seats: 12,
-    speed: '530 mph',
-    range: '4,018 nm',
-    estimate: 15000,
+    id: 'da62-blue',
+    name: 'Diamond DA62 (Blue)',
+    type: 'Twin Engine',
+    seats: 6,
+    speed: '192 mph',
+    range: '1,285 nm',
+    estimate: 2800,
+    image: 'https://images.unsplash.com/photo-1605450183428-eb9127d6d40a?q=80&w=2940&auto=format&fit=crop'
+  },
+  {
+    id: 'cirrus-vision',
+    name: 'Cirrus Vision Jet',
+    type: 'Personal Jet',
+    seats: 5,
+    speed: '345 mph',
+    range: '1,275 nm',
+    estimate: 4500,
     image: 'https://images.unsplash.com/photo-1569629743817-70d8db6c323b?q=80&w=2940&auto=format&fit=crop'
   }
 ];
@@ -117,8 +117,12 @@ export default function Direct2App() {
       <div className="relative z-10 min-h-screen flex flex-col">
         {/* Simple Header */}
         <header className="p-6 flex justify-between items-center max-w-7xl mx-auto w-full">
-          <div className="text-2xl md:text-3xl font-serif text-white tracking-tight cursor-pointer" onClick={() => setCurrentScreen('HOME')}>
-            Direct<span className="text-amber-500 font-sans font-bold italic">2</span>
+          <div className="cursor-pointer" onClick={() => setCurrentScreen('HOME')}>
+            <img
+              src="https://storage.googleapis.com/msgsndr/aewRs6OT3I7lUSwPF6ET/media/680efd80b3d583557eca3366.png"
+              alt="Direct2"
+              className="h-8 md:h-10 w-auto"
+            />
           </div>
           <nav className="hidden md:flex gap-6 text-slate-300 text-sm font-medium">
             <button className="hover:text-amber-500 transition-colors">Concierge</button>
@@ -206,73 +210,85 @@ function HomeScreen({ bookingData, updateBooking, onNext, searchAirports }: { bo
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
             {/* Route */}
             <div className="md:col-span-5 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-0 md:border md:border-slate-200 md:rounded-xl">
-               <div className="relative flex items-center p-4 bg-slate-50 md:bg-white border border-slate-200 md:border-0 rounded-xl md:rounded-none md:rounded-l-xl z-10">
-                  <MapPin className="text-slate-400 w-5 h-5 absolute left-4" />
-                  <div className="ml-8 flex-1 relative">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">From</label>
-                    <input
-                      type="text"
-                      value={originSearch}
-                      onChange={(e) => {
-                        setOriginSearch(e.target.value);
-                        setShowOriginResults(true);
-                      }}
-                      onFocus={() => setShowOriginResults(true)}
-                      onBlur={() => setTimeout(() => setShowOriginResults(false), 200)}
-                      className="w-full bg-transparent p-0 border-none focus:ring-0 text-slate-900 font-medium placeholder:text-slate-300"
-                      placeholder="Origin"
+               <div className="relative p-4 bg-slate-50 md:bg-white border border-slate-200 md:border-0 rounded-xl md:rounded-none md:rounded-l-xl z-10">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src="https://storage.googleapis.com/msgsndr/aewRs6OT3I7lUSwPF6ET/media/68251058c4693210f8c542da.svg"
+                      alt="Departure"
+                      className="w-5 h-5 flex-shrink-0"
                     />
-                    {showOriginResults && originResults.length > 0 && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-2xl border border-slate-200 max-h-60 overflow-y-auto z-[100]">
-                        {originResults.map((airport) => (
-                          <button
-                            key={airport.iata}
-                            type="button"
-                            onClick={() => selectOrigin(airport.iata)}
-                            className="w-full text-left px-4 py-3 hover:bg-amber-50 border-b border-slate-100 last:border-0 transition-colors"
-                          >
-                            <div className="font-bold text-slate-900">{airport.iata}</div>
-                            <div className="text-sm text-slate-600">{airport.name}</div>
-                            <div className="text-xs text-slate-400">{airport.city}, {airport.state || airport.country}</div>
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                    <div className="flex-1 relative min-w-0">
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">From</label>
+                      <input
+                        type="text"
+                        value={originSearch}
+                        onChange={(e) => {
+                          setOriginSearch(e.target.value);
+                          setShowOriginResults(true);
+                        }}
+                        onFocus={() => setShowOriginResults(true)}
+                        onBlur={() => setTimeout(() => setShowOriginResults(false), 200)}
+                        className="w-full bg-transparent p-0 border-none focus:ring-0 text-slate-900 font-medium placeholder:text-slate-300"
+                        placeholder="Origin"
+                      />
+                      {showOriginResults && originResults.length > 0 && (
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-2xl border border-slate-200 max-h-60 overflow-y-auto z-[100]">
+                          {originResults.map((airport) => (
+                            <button
+                              key={airport.iata}
+                              type="button"
+                              onClick={() => selectOrigin(airport.iata)}
+                              className="w-full text-left px-4 py-3 hover:bg-amber-50 border-b border-slate-100 last:border-0 transition-colors"
+                            >
+                              <div className="font-bold text-slate-900">{airport.iata}</div>
+                              <div className="text-sm text-slate-600">{airport.name}</div>
+                              <div className="text-xs text-slate-400">{airport.city}, {airport.state || airport.country}</div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-                <div className="relative flex items-center p-4 bg-slate-50 md:bg-white border border-slate-200 md:border-0 md:border-l md:border-slate-100 rounded-xl md:rounded-none md:rounded-r-xl z-10">
-                  <MapPin className="text-slate-400 w-5 h-5 absolute left-4" />
-                  <div className="ml-8 flex-1 relative">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">To</label>
-                    <input
-                      type="text"
-                      value={destSearch}
-                      onChange={(e) => {
-                        setDestSearch(e.target.value);
-                        setShowDestResults(true);
-                      }}
-                      onFocus={() => setShowDestResults(true)}
-                      onBlur={() => setTimeout(() => setShowDestResults(false), 200)}
-                      className="w-full bg-transparent p-0 border-none focus:ring-0 text-slate-900 font-medium placeholder:text-slate-300"
-                      placeholder="Destination"
-                      autoFocus
+                <div className="relative p-4 bg-slate-50 md:bg-white border border-slate-200 md:border-0 md:border-l md:border-slate-100 rounded-xl md:rounded-none md:rounded-r-xl z-10">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src="https://storage.googleapis.com/msgsndr/aewRs6OT3I7lUSwPF6ET/media/68251058c4693210f8c542da.svg"
+                      alt="Arrival"
+                      className="w-5 h-5 flex-shrink-0"
                     />
-                    {showDestResults && destResults.length > 0 && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-2xl border border-slate-200 max-h-60 overflow-y-auto z-[100]">
-                        {destResults.map((airport) => (
-                          <button
-                            key={airport.iata}
-                            type="button"
-                            onClick={() => selectDestination(airport.iata)}
-                            className="w-full text-left px-4 py-3 hover:bg-amber-50 border-b border-slate-100 last:border-0 transition-colors"
-                          >
-                            <div className="font-bold text-slate-900">{airport.iata}</div>
-                            <div className="text-sm text-slate-600">{airport.name}</div>
-                            <div className="text-xs text-slate-400">{airport.city}, {airport.state || airport.country}</div>
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                    <div className="flex-1 relative min-w-0">
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">To</label>
+                      <input
+                        type="text"
+                        value={destSearch}
+                        onChange={(e) => {
+                          setDestSearch(e.target.value);
+                          setShowDestResults(true);
+                        }}
+                        onFocus={() => setShowDestResults(true)}
+                        onBlur={() => setTimeout(() => setShowDestResults(false), 200)}
+                        className="w-full bg-transparent p-0 border-none focus:ring-0 text-slate-900 font-medium placeholder:text-slate-300"
+                        placeholder="Destination"
+                        autoFocus
+                      />
+                      {showDestResults && destResults.length > 0 && (
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-2xl border border-slate-200 max-h-60 overflow-y-auto z-[100]">
+                          {destResults.map((airport) => (
+                            <button
+                              key={airport.iata}
+                              type="button"
+                              onClick={() => selectDestination(airport.iata)}
+                              className="w-full text-left px-4 py-3 hover:bg-amber-50 border-b border-slate-100 last:border-0 transition-colors"
+                            >
+                              <div className="font-bold text-slate-900">{airport.iata}</div>
+                              <div className="text-sm text-slate-600">{airport.name}</div>
+                              <div className="text-xs text-slate-400">{airport.city}, {airport.state || airport.country}</div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
             </div>
@@ -322,7 +338,7 @@ function HomeScreen({ bookingData, updateBooking, onNext, searchAirports }: { bo
           </div>
           <div className="mt-6 flex justify-end">
             <button type="submit" className="w-full md:w-auto py-4 px-10 bg-amber-500 hover:bg-amber-400 text-slate-900 rounded-xl font-bold text-lg flex items-center justify-center gap-3 shadow-xl shadow-amber-500/20 transition-all hover:-translate-y-0.5">
-              <Plane className="w-5 h-5 fill-slate-900" /> Search Flights
+              <ArrowRight className="w-5 h-5" /> Search Flights
             </button>
           </div>
         </form>
